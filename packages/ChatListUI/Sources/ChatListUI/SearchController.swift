@@ -525,7 +525,7 @@ fileprivate func prepareEntries(from:[AppearanceWrapperEntry<ChatListSearchEntry
                 arguments.setPeerAsTag(peer)
             }, contextMenuItems: {
                 return peerContextMenuItems(peer: peer, pinnedItems: pinnedItems, arguments: arguments, isRecent: false)
-            }, unreadBadge: badge, canAddAsTag: canAddAsTag, storyStats: storyStats, openStory: arguments.openStory, customAction: customAction, monoforumPeer: chatOrMonoforum)
+            }, unreadBadge: badge, canAddAsTag: canAddAsTag, storyStats: FastSettings.hideAllStories ? nil : storyStats, openStory: arguments.openStory, customAction: customAction, monoforumPeer: chatOrMonoforum)
         case let .topic(item, _, _, _, _):
             return SearchTopicRowItem(initialSize, stableId: entry.stableId, item: item, context: arguments.context)
         case let .recentlySearch(renderedPeer, _, secretChat, status, badge, drawBorder, storyStats, canRemoveRecent, isGrossingApp, isRecentApp):
@@ -556,7 +556,7 @@ fileprivate func prepareEntries(from:[AppearanceWrapperEntry<ChatListSearchEntry
                 }
             }, contextMenuItems: {
                 return peerContextMenuItems(peer: peer, pinnedItems: pinnedItems, arguments: arguments, isRecent: true)
-            }, unreadBadge: badge, storyStats: storyStats, openStory: arguments.openStory, customAction: customAction, isGrossingApp: isGrossingApp, isRecentApp: isRecentApp, monoforumPeer: chatOrMonoforum)
+            }, unreadBadge: badge, storyStats: FastSettings.hideAllStories ? nil : storyStats, openStory: arguments.openStory, customAction: customAction, isGrossingApp: isGrossingApp, isRecentApp: isRecentApp, monoforumPeer: chatOrMonoforum)
         case let .savedMessages(peer):
             return RecentPeerRowItem(initialSize, peer: peer, account: arguments.context.account, context: arguments.context, stableId: entry.stableId, titleStyle: ControlStyle(font: .medium(.text), foregroundColor: theme.colors.text, highlightColor:.white), borderType: [.Right], drawCustomSeparator: true, isLookSavedMessage: true, contextMenuItems: {
                 return peerContextMenuItems(peer: peer, pinnedItems: pinnedItems, arguments: arguments, isRecent: false)
@@ -1305,7 +1305,7 @@ public class SearchController<Context: AccountContextProtocol>: GenericViewContr
                        
                         var entries:[ChatListSearchEntry] = []
                         
-                        if let storySearchState, !storySearchState.items.isEmpty, globalTags.publicPosts || query.hasPrefix("#") || query.hasPrefix("$") {
+                        if !FastSettings.hideAllStories, let storySearchState, !storySearchState.items.isEmpty, globalTags.publicPosts || query.hasPrefix("#") || query.hasPrefix("$") {
                             entries.append(.foundStories(storySearchState, index: 0, query: query))
                         }
                         
@@ -1391,7 +1391,10 @@ public class SearchController<Context: AccountContextProtocol>: GenericViewContr
                 
             } else if query.isEmpty, let listType = globalTags.listType, listType != .globalPosts {
                 let channels: Signal<[FoundPeer], NoError> = context.engine.peers.recommendedChannels(peerId: nil) |> map {
-                    $0?.channels.map {
+                    if FastSettings.hideRecommendedChannels {
+                        return []
+                    }
+                    return $0?.channels.map {
                         .init(peer: $0.peer, subscribers: $0.subscribers)
                     } ?? []
                 }
@@ -2144,7 +2147,7 @@ public class SearchController<Context: AccountContextProtocol>: GenericViewContr
             searchQuery.set(nil)
         }
         
-        if let query, query.hasPrefix("#") || query.hasPrefix("$"), query.length > 1, self.searchTags?.publicPosts == true || self.searchTags?.peerTag != nil {
+        if !FastSettings.hideAllStories, let query, query.hasPrefix("#") || query.hasPrefix("$"), query.length > 1, self.searchTags?.publicPosts == true || self.searchTags?.peerTag != nil {
             let globalStorySearchContext = SearchStoryListContext(account: context.account, source: .hashtag(self.searchTags?.peerTag, query))
             
             self.globalStorySearchContext = globalStorySearchContext

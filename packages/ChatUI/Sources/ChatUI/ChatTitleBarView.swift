@@ -12,6 +12,7 @@ import ShortPeerRow
 import TelegramTheme
 import TelegramUtils
 import InlineStickerLayer
+import InAppSettings
 
 
 private final class SelectMessagesPlaceholderView: View {
@@ -130,7 +131,7 @@ class ChatTitleBarView: TitledBarView, InteractionContentViewProtocol {
     }
     
     var hasStories: Bool {
-        if let storyState = story, !storyState.items.isEmpty {
+        if let storyState = story, !FastSettings.hideAllStories, !storyState.items.isEmpty {
             return true
         }
         return false
@@ -139,7 +140,7 @@ class ChatTitleBarView: TitledBarView, InteractionContentViewProtocol {
     private func updateStoryState(_ story: PeerExpiringStoryListContext.State?, animated: Bool) {
         let transition: ContainedViewLayoutTransition = animated ? .animated(duration: 0.2, curve: .easeOut) : .immediate
         if self.story != story {
-            if let storyState = story, !storyState.items.isEmpty {
+            if let storyState = story, !FastSettings.hideAllStories, !storyState.items.isEmpty {
                 let peer: Peer? = peerView != nil ? peerViewMainPeer(peerView!) : nil
                 
                 let compoment = AvatarStoryIndicatorComponent(state: storyState, presentation: theme, isRoundedRect: peer.map { TelegramUtilsHooks.shared.peerIsForum($0) } == true)
@@ -149,7 +150,7 @@ class ChatTitleBarView: TitledBarView, InteractionContentViewProtocol {
             }
         }
         
-        if let story = story, story.hasLiveItems {
+        if let story = story, !FastSettings.hideAllStories, story.hasLiveItems {
             let current: ImageView
             if let view = liveStreamView {
                 current = view

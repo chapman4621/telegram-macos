@@ -181,6 +181,27 @@ public class FastSettings {
     private static let kContactsSort = "kContactsSort";
     
     private static let kAgeVerification = "kAgeVerification2";
+
+    private static let kHideRecommendedChannels = "kHideRecommendedChannels"
+    private static let kHideAllStories = "kHideAllStories"
+
+    public static var hideRecommendedChannels: Bool {
+        get {
+            return UserDefaults.standard.bool(forKey: kHideRecommendedChannels)
+        }
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: kHideRecommendedChannels)
+        }
+    }
+
+    public static var hideAllStories: Bool {
+        get {
+            return UserDefaults.standard.bool(forKey: kHideAllStories)
+        }
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: kHideAllStories)
+        }
+    }
     
     public static var contactsSort: ContactsSort {
         get {

@@ -1678,7 +1678,7 @@ public class ChatServiceItem: ChatRowItem {
                 case .joinedChannel:
                     let text = strings().chatServiceJoinedChannel
                     let _ = attributedString.append(string: text, color: grayTextColor, font: NSFont.normal(theme.fontSize))
-                    if let recommendedChannels = entry.additionalData.recommendedChannels, !recommendedChannels.channels.isEmpty, !recommendedChannels.isHidden {
+                    if let recommendedChannels = entry.additionalData.recommendedChannels, !FastSettings.hideRecommendedChannels, !recommendedChannels.channels.isEmpty, !recommendedChannels.isHidden {
                         self.suggestChannelsData = .init(channels: recommendedChannels, context: context, presentation: theme)
                     }
                 case let .giveawayResults(winners, unclaimed, stars):

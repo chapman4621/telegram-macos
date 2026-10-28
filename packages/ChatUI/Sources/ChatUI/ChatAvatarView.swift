@@ -9,6 +9,7 @@ import AvatarUI
 import TelegramContext
 import TelegramTheme
 import TelegramUtils
+import InAppSettings
 
 public final class ChatAvatarView : Control {
     private let avatar: AvatarStoryControl = AvatarStoryControl(font: .avatar(.title), size: NSMakeSize(36, 36))
@@ -35,7 +36,7 @@ public final class ChatAvatarView : Control {
         
         let animated: Bool = self.peer != nil
         
-        if let storyStats = storyStats, peer.id != item.context.peerId, message?.id.peerId.namespace == Namespaces.Peer.CloudChannel || message?.id.peerId.namespace == Namespaces.Peer.CloudGroup {
+        if let storyStats = storyStats, !FastSettings.hideAllStories, peer.id != item.context.peerId, message?.id.peerId.namespace == Namespaces.Peer.CloudChannel || message?.id.peerId.namespace == Namespaces.Peer.CloudGroup {
             self.storyComponent = .init(stats: storyStats, presentation: theme)
         } else {
             self.storyComponent = nil

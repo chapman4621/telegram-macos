@@ -96,7 +96,7 @@ public func SimilarChannelsController(context: any AccountContextProtocol, peerI
     let actionsDisposable = DisposableSet()
     
 
-    let initialState = State(channels: recommendedChannels, isPremium: context.isPremium)
+    let initialState = State(channels: FastSettings.hideRecommendedChannels ? nil : recommendedChannels, isPremium: context.isPremium)
     
     let statePromise = ValuePromise(initialState, ignoreRepeated: true)
     let stateValue = Atomic(value: initialState)
@@ -112,7 +112,7 @@ public func SimilarChannelsController(context: any AccountContextProtocol, peerI
     actionsDisposable.add(combineLatest(context.engine.peers.recommendedChannels(peerId: peerId), isPremium).start(next: { channels, isPremium in
         updateState { current in
             var current = current
-            current.channels = channels
+            current.channels = FastSettings.hideRecommendedChannels ? nil : channels
             current.isPremium = isPremium
             return current
         }

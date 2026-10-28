@@ -89,6 +89,9 @@ class PeerInfoArguments<Context: AccountContextProtocol> {
     }
     
     func archiveStories() {
+        if FastSettings.hideAllStories {
+            return
+        }
         self.pushViewController(StoryMediaController(context: context, peerId: peerId, listContext: PeerStoryListContext(account: context.account, peerId: peerId, isArchived: true, folderId: nil), standalone: true, isArchived: true))
     }
     
@@ -647,7 +650,7 @@ public class PeerInfoController<Context: AccountContextProtocol>: EditableViewCo
         self.initialState = initialState
         self.starGiftsProfile = starGiftsProfile ?? ProfileGiftsContext(account: context.account, peerId: peerId)
         
-        if peerId.namespace == Namespaces.Peer.CloudUser || peerId.namespace == Namespaces.Peer.CloudChannel {
+        if (peerId.namespace == Namespaces.Peer.CloudUser || peerId.namespace == Namespaces.Peer.CloudChannel), !FastSettings.hideAllStories {
             self.stories = stories ?? .init(account: context.account, peerId: peerId)
         } else {
             self.stories = nil

@@ -10,6 +10,7 @@ import TelegramUtils
 import Localization
 import LocalAnimations
 import GeneralRows
+import InAppSettings
 import ShortPeerRow
 import InputDataUI
 import ChatHistoryModel
@@ -146,7 +147,7 @@ private func groupPeersEntries<Context: AccountContextProtocol>(state: GroupPeer
                         arguments.peerInfo(peer.id)
                     }, contextMenuItems: {
                         return .single(menuItems)
-                    }, inputActivity: inputActivity, highlightVerified: true, customTheme: .initialize(theme), story: stories?.subscriptionItem(peer), openStory: arguments.openStory, fullSize: true, badgeAction: badgeAction)
+                    }, inputActivity: inputActivity, highlightVerified: true, customTheme: .initialize(theme), story: FastSettings.hideAllStories ? nil : stories?.subscriptionItem(peer), openStory: arguments.openStory, fullSize: true, badgeAction: badgeAction)
                 }))
             case let .showMore(_, _, viewType):
                 entries.append(.custom(sectionId: sectionId, index: index, value: .none, identifier: InputDataIdentifier("_id_show_more"), equatable: nil, comparable: nil, item: { initialSize, stableId in

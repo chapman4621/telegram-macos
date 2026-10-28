@@ -536,7 +536,7 @@ public class ChatListRowItem: TableRowItem {
         self.folders = nil
         self.tags = nil
         self.canPreviewChat = false
-        if let storyState = storyState, storyState.items.count > 0 {
+        if let storyState = storyState, !FastSettings.hideAllStories, storyState.items.count > 0 {
             let unseenCount: Int = storyState.items.reduce(0, {
                 $0 + ($1.unseenCount > 0 ? 1 : 0)
             })
@@ -899,7 +899,7 @@ public class ChatListRowItem: TableRowItem {
         self.isMuted = isMuted
         self.readState = readState
         
-        if let story = story, peer?.id != context.peerId {
+        if let story = story, !FastSettings.hideAllStories, peer?.id != context.peerId {
             self.avatarStoryIndicator = .init(stats: story, presentation: theme, isRoundedRect: peer.map { TelegramUtilsHooks.shared.peerIsForum($0) } == true)
         } else {
             self.avatarStoryIndicator = nil

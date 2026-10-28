@@ -728,7 +728,7 @@ class PeerInfoHeadItem<Context: AccountContextProtocol>: GeneralRowItem {
         
         self.rating = (peerView.cachedData as? CachedUserData)?.starRating
         
-        if let storyState = stories, !storyState.items.isEmpty {
+        if let storyState = stories, !FastSettings.hideAllStories, !storyState.items.isEmpty {
             
             let colors: AvatarStoryIndicatorComponent.ActiveColors
             if let profileColor = peer?.profileColor {

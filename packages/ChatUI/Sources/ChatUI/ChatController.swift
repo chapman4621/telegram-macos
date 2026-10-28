@@ -3804,7 +3804,7 @@ open class ChatController<Context: AccountContextProtocol>: TelegramGenericViewC
         }
         
                 
-        if chatLocation().peerId.namespace == Namespaces.Peer.CloudUser || chatLocation().peerId.namespace == Namespaces.Peer.CloudChannel, chatLocation().peerId != context.peerId, mode == .history {
+        if chatLocation().peerId.namespace == Namespaces.Peer.CloudUser || chatLocation().peerId.namespace == Namespaces.Peer.CloudChannel, !FastSettings.hideAllStories, chatLocation().peerId != context.peerId, mode == .history {
             self.stories = PeerExpiringStoryListContext(account: context.account, peerId: peerId)
         } else {
             self.stories = nil
@@ -3818,7 +3818,7 @@ open class ChatController<Context: AccountContextProtocol>: TelegramGenericViewC
         }
         
         let recommendedChannels: Signal<RecommendedChannels?, NoError>
-        if peerId.namespace == Namespaces.Peer.CloudChannel {
+        if peerId.namespace == Namespaces.Peer.CloudChannel, !FastSettings.hideRecommendedChannels {
             recommendedChannels = context.engine.peers.recommendedChannels(peerId: peerId)
         } else {
             recommendedChannels = .single(nil)

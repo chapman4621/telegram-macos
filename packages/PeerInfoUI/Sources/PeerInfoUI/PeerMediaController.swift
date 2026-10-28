@@ -13,6 +13,7 @@
  import ChatUI
  import GeneralRows
   import InputDataUI
+ import InAppSettings
  import LocalAnimations
  import Localization
  import MessageUtils
@@ -1428,7 +1429,7 @@
         
         if threadInfo == nil, peerId.namespace == Namespaces.Peer.CloudUser || peerId.namespace == Namespaces.Peer.CloudChannel {
             storiesTab = storyListContext.state |> map { state -> (exist: Bool, loaded: Bool) in
-                return (exist: state.totalCount > 0, loaded: true)
+                return (exist: !FastSettings.hideAllStories && state.totalCount > 0, loaded: true)
             } |> map { data -> (tag: PeerMediaCollectionMode, exists: Bool, hasLoaded: Bool) in
                 return (tag: .stories, exists: data.exist, hasLoaded: data.loaded)
             }
@@ -1438,7 +1439,7 @@
         
         if let archiveStoryListContext {
             archiveStoriesTab = archiveStoryListContext.state |> map { state -> (exist: Bool, loaded: Bool) in
-                return (exist: state.totalCount > 0, loaded: true)
+                return (exist: !FastSettings.hideAllStories && state.totalCount > 0, loaded: true)
             } |> map { data -> (tag: PeerMediaCollectionMode, exists: Bool, hasLoaded: Bool) in
                 return (tag: .archiveStories, exists: data.exist, hasLoaded: data.loaded)
             }
@@ -1447,7 +1448,7 @@
         }
         
         
-        if threadInfo == nil, peerId.namespace == Namespaces.Peer.CloudChannel {
+        if threadInfo == nil, peerId.namespace == Namespaces.Peer.CloudChannel, !FastSettings.hideRecommendedChannels {
             similarChannels = context.engine.peers.recommendedChannels(peerId: peerId) |> map { channels -> (exist: Bool, loaded: Bool) in
                 return (exist: (channels?.channels.count ?? 0) > 0, loaded: true)
             } |> map { data -> (tag: PeerMediaCollectionMode, exists: Bool, hasLoaded: Bool) in
@@ -1850,9 +1851,9 @@
         }))
         
     
-        let storiesCount = self.storyListContext.state |> map { Int32($0.totalCount) }
+        let storiesCount = self.storyListContext.state |> map { FastSettings.hideAllStories ? 0 : Int32($0.totalCount) }
         let commonGroupsCount = context.engine.data.subscribe(TelegramEngine.EngineData.Item.Peer.CommonGroupCount(id: peerId)) |> map { Int32($0 ?? 0) }
-        let similarChannelsCount = context.engine.peers.recommendedChannels(peerId: peerId) |> map { $0?.count ?? 0 }
+        let similarChannelsCount = context.engine.peers.recommendedChannels(peerId: peerId) |> map { FastSettings.hideRecommendedChannels ? 0 : ($0?.count ?? 0) }
         let similarBotsCount = context.engine.peers.recommendedBots(peerId: peerId) |> map { Int32($0?.bots.count ?? 0) }
 
         let savedMessagesCount: Signal<Int32, NoError> = context.engine.messages.savedMessagesPeersStats() |> map { Int32($0 ?? 0) }

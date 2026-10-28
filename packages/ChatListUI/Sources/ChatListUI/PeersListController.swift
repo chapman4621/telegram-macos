@@ -318,6 +318,9 @@ public struct PeerListState : Equatable {
     public var hashtag: Hashtag?
     
     public var hasStories: Bool {
+        if FastSettings.hideAllStories {
+            return false
+        }
         if let stories = self.stories, !isContacts, !mode.isForumLike {
             if self.splitState == .minimisize {
                 return false
@@ -1221,7 +1224,7 @@ public class PeerListContainerView : Control {
 
         let hideHeader = state.splitState == .minimisize && state.filterData.sidebar
 
-        if !hideHeader, let stories = state.stories, state.hasStories {
+        if !hideHeader, !FastSettings.hideAllStories, let stories = state.stories, state.hasStories {
             self.storiesItem = .init(frame.size, stableId: 0, context: arguments.context, isArchive: state.mode.groupId == .archive, state: stories, open: arguments.openStory, getInterfaceState: arguments.getStoryInterfaceState, reveal: arguments.revealStoriesState)
             storiesItem?.table = self.tableView
         } else {

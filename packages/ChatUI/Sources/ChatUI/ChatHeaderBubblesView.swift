@@ -12,6 +12,7 @@ import ShortPeerRow
 import TelegramTheme
 import TelegramUtils
 import InlineStickerLayer
+import InAppSettings
 
 
 private final class RightActionsCluster: Control {
@@ -694,7 +695,7 @@ final class ChatHeaderBubblesView: View, InteractionContentViewProtocol {
 
     private func updateStoryRing(_ story: PeerExpiringStoryListContext.State?, animated: Bool) {
         let transition: ContainedViewLayoutTransition = animated ? .animated(duration: 0.2, curve: .easeOut) : .immediate
-        if let storyState = story, !storyState.items.isEmpty {
+        if let storyState = story, !FastSettings.hideAllStories, !storyState.items.isEmpty {
             let component = AvatarStoryIndicatorComponent(state: storyState, presentation: theme, isRoundedRect: false)
             avatarControl.update(component: component, availableSize: NSMakeSize(26, 26), transition: transition)
         } else {
@@ -703,7 +704,7 @@ final class ChatHeaderBubblesView: View, InteractionContentViewProtocol {
     }
 
     private func updateLiveStream(_ story: PeerExpiringStoryListContext.State?, animated: Bool) {
-        if let story = story, story.hasLiveItems {
+        if let story = story, !FastSettings.hideAllStories, story.hasLiveItems {
             let current: ImageView
             if let view = liveStreamView {
                 current = view

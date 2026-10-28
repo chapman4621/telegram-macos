@@ -4,6 +4,7 @@ import Postbox
 import TelegramCore
 
 import SwiftSignalKit
+import InAppSettings
 import Localization
 import TelegramContext
 import TelegramTheme
@@ -47,7 +48,7 @@ public class RecentPeerRowItem: ShortPeerRowItem {
         }
         
 
-        super.init(initialSize, peer: peer, account: account, context: context, stableId: stableId, enabled: enabled, height: height, photoSize: photoSize, titleStyle: titleStyle, titleAddition: titleAddition, leftImage: leftImage, statusStyle: statusStyle, status: status, borderType: borderType, drawCustomSeparator: drawCustomSeparator, isLookSavedMessage: isLookSavedMessage, deleteInset: deleteInset, drawLastSeparator: drawLastSeparator, inset: inset, drawSeparatorIgnoringInset: drawSeparatorIgnoringInset, interactionType: interactionType, generalType: generalType, action: action, contextMenuItems: contextMenuItems, highlightVerified: true, customTheme: customTheme, story: storyStats?.subscriptionItem(peer), openStory: openStory, customAction: badge != nil ? nil : customAction, makeAvatarRound: isGrossingApp, monoforumPeer: monoforumPeer)
+        super.init(initialSize, peer: peer, account: account, context: context, stableId: stableId, enabled: enabled, height: height, photoSize: photoSize, titleStyle: titleStyle, titleAddition: titleAddition, leftImage: leftImage, statusStyle: statusStyle, status: status, borderType: borderType, drawCustomSeparator: drawCustomSeparator, isLookSavedMessage: isLookSavedMessage, deleteInset: deleteInset, drawLastSeparator: drawLastSeparator, inset: inset, drawSeparatorIgnoringInset: drawSeparatorIgnoringInset, interactionType: interactionType, generalType: generalType, action: action, contextMenuItems: contextMenuItems, highlightVerified: true, customTheme: customTheme, story: FastSettings.hideAllStories ? nil : storyStats?.subscriptionItem(peer), openStory: openStory, customAction: badge != nil ? nil : customAction, makeAvatarRound: isGrossingApp, monoforumPeer: monoforumPeer)
     }
     
     

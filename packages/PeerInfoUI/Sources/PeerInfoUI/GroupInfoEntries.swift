@@ -1967,7 +1967,7 @@ enum GroupInfoEntry<Context: AccountContextProtocol>: PeerInfoEntry {
                 arguments?.peerInfo(peer!.id)
             }, contextMenuItems: {
                 return .single(menuItems)
-            }, inputActivity: inputActivity, highlightVerified: true, story: stories?.subscriptionItem(peer!))
+            }, inputActivity: inputActivity, highlightVerified: true, story: FastSettings.hideAllStories ? nil : stories?.subscriptionItem(peer!))
         case let .showMore(_, _, viewType):
             return GeneralInteractedRowItem(initialSize, stableId: stableId.hashValue, name: strings().peerInfoShowMore, nameStyle: blueActionButton, type: .none, viewType: viewType, action: arguments.showMore, thumb: GeneralThumbAdditional(thumb: theme.icons.chatSearchUp, textInset: 52, thumbInset: 4))
         case let .leave(_, text, viewType):
