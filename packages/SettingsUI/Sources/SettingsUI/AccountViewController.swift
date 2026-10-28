@@ -598,17 +598,7 @@ private func accountInfoEntries<Context: AccountContextProtocol>(peerView:PeerVi
         }
     }
     
-    let accountsLimit: Int = normalAccountsLimit
-    let effectiveLimit: Int
-    if context.premiumIsBlocked {
-        effectiveLimit = accountsLimit
-    } else {
-        effectiveLimit = accountsLimit + 1
-    }
-//    let hasPremium = accounts.filter({ $0.peer.isPremium })
-//    let normalCount = accounts.filter({ !$0.peer.isPremium }).count
-
-    if accounts.count < effectiveLimit, !context.isSupport {
+    if !context.isSupport {
         entries.append(.addAccount(index: index, accounts, viewType: .singleItem))
         index += 1
     }
@@ -1074,16 +1064,7 @@ open class AccountViewController<Context: AccountContextProtocol> : TelegramGene
             SettingsNavigationHooks.shared.showMultigift(context, { [weak self] in (self?.tableView.item(stableId: AccountInfoEntryId.index(21))?.view as? GeneralContainableRowView)?.containerView })
         }, addAccount: { accounts in
             let testingEnvironment = NSApp.currentEvent?.modifierFlags.contains(.command) == true
-            let hasPremium = accounts.contains(where: { $0.peer.isPremium })
-            if accounts.count == normalAccountsLimit {
-                if hasPremium {
-                    context.sharedContext.beginNewAuth(testingEnvironment: testingEnvironment)
-                } else {
-                    SettingsNavigationHooks.shared.showPremiumLimit(context, .accounts(accounts.count))
-                }
-            } else {
-                context.sharedContext.beginNewAuth(testingEnvironment: testingEnvironment)
-            }
+            context.sharedContext.beginNewAuth(testingEnvironment: testingEnvironment)
         }, setStatus: { control, user in
             setStatus(control, user)
         }, runStatusPopover: { [weak self] in

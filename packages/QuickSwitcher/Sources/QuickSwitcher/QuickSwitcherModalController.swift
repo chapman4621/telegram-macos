@@ -432,15 +432,7 @@ public class QuickSwitcherModalController: ModalViewController, TableViewDelegat
                         return search.request.isEmpty || value.peer.displayTitle.lowercased().contains(search.request.lowercased())
                     }
                     
-                    let accountsLimit: Int = normalAccountsLimit
-                    let effectiveLimit: Int
-                    if context.premiumIsBlocked {
-                        effectiveLimit = accountsLimit
-                    } else {
-                        effectiveLimit = accountsLimit + 1
-                    }
-                    
-                    let canAddAccount = effectiveLimit > peers.count
+                    let canAddAccount = true
                     
                     return (searchEntriesForPeers(peers, recentlyUsed: [], isLoading: false, displayAsSaved: false, canAddAccount: canAddAccount), false)
             }
@@ -586,23 +578,7 @@ public class QuickSwitcherModalController: ModalViewController, TableViewDelegat
 
             close()
         } else if genericView.tableView.selectedItem() is GeneralInteractedRowItem {
-            var accounts: [Peer] = []
-            genericView.tableView.enumerateItems(with: { item in
-                if let item = item as? ShortPeerRowItem {
-                    accounts.append(item.peer)
-                }
-                return true
-            })
-            let hasPremium = accounts.contains(where: { $0.isPremium })
-            if accounts.count == normalAccountsLimit {
-                if hasPremium {
-                    context.sharedContext.beginNewAuth(testingEnvironment: false)
-                } else {
-                    QuickSwitcherHooks.shared.showAccountsLimit(context, accounts.count)
-                }
-            } else {
-                context.sharedContext.beginNewAuth(testingEnvironment: false)
-            }
+            context.sharedContext.beginNewAuth(testingEnvironment: false)
             close()
         }
         return .invoked
