@@ -370,13 +370,7 @@ func installSettingsUIHooks() {
         #endif
         return text
     }, appUpdateState: {
-        let appUpdateState: Signal<Any?, NoError>
-        #if APP_STORE
-            appUpdateState = .single(nil)
-        #else
-        appUpdateState = appUpdateStateSignal |> map(Optional.init)
-        #endif
-        return appUpdateState
+        return .single(nil)
     }, pushAppUpdate: { navigation in
         #if !APP_STORE
         navigation.push(AppUpdateViewController(), false)

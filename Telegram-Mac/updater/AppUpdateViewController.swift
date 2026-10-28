@@ -9,7 +9,7 @@ import SwiftSignalKit
 import Sparkle
 import CrashRecoveryUI
 
-
+let appUpdatesDisabled: Bool = true
 
 final class TelegramUpdater : NSObject, SUUpdaterPrivate {
     var delegate: SUUpdaterDelegate!
@@ -236,6 +236,10 @@ private func appUpdateEntries(state: AppUpdateState) -> [InputDataEntry] {
 
 
 func AppUpdateViewController() -> InputDataController {
+    
+    if appUpdatesDisabled {
+        updateState { $0.withUpdatedLoadingState(.uptodate) }
+    }
     
     let signal: Signal<InputDataSignalValue, NoError> = statePromise.get() |> deliverOnResourceQueue |> map { value in
         return appUpdateEntries(state: value)
@@ -622,6 +626,9 @@ func crashRecoveryUpdater() -> CrashRecoveryUpdater {
 }
 
 func updateAppIfNeeded() {
+    guard !appUpdatesDisabled else {
+        return
+    }
     let state = stateValue.with {$0.loadingState}
     
     switch state {
@@ -732,6 +739,10 @@ private func cancelStagedUpdate() {
 }
 
 private func resetUpdater() {
+    guard !appUpdatesDisabled else {
+        updateState { $0.withUpdatedLoadingState(.uptodate) }
+        return
+    }
     
     #if !GITHUB
         let update:()->Void = {
@@ -763,6 +774,10 @@ private func resetUpdater() {
 private var updaterSource: UpdaterSource? = nil
 
 func updater_resetWithUpdaterSource(_ source: UpdaterSource, force: Bool = true) {
+    guard !appUpdatesDisabled else {
+        updateState { $0.withUpdatedLoadingState(.uptodate) }
+        return
+    }
     let state = stateValue.with { $0 }
     switch state.loadingState {
     case .readyToInstall:
