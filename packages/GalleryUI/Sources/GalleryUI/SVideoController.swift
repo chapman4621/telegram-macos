@@ -463,28 +463,6 @@ public class SVideoController: GenericViewController<SVideoView>, PictureInPictu
             partDisposable.set(preload.start())
         }
         
-        if let message, let peer = message.peers[message.id.peerId], peer.isChannel {
-            let adContext = context.engine.messages.adMessages(peerId: message.id.peerId, messageId: message.id)
-            self.adContext = adContext
-            
-            var invoked: Bool = false
-            
-            adStateDisposable.set(combineLatest(queue:.mainQueue(), adContext.state, status).startStrict(next: { [weak self] values in
-               
-                let ( _, messages, startDelay, betweenDelay) = values.0
-                let status = values.1
-                
-                if !messages.isEmpty, let startDelay, !invoked {
-                    if Int32(status.timestamp) >= startDelay {
-                        self?.runAdMessages(messages, startDelay, betweenDelay)
-                        invoked = true
-                    }
-                }
-            }))
-        }
-
-
-        
         genericView.layerContentsRedrawPolicy = .duringViewResize
 
         

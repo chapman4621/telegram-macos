@@ -913,7 +913,6 @@ public class SearchController<Context: AccountContextProtocol>: GenericViewContr
         let searchMessagesStateValue = self.searchMessagesStateValue
         
         let messagesSourceValue = messagesSourceValue.get()
-        let searchAdState = self.searchAdState.get()
         let approvedGlobalPostQueryState = self.approvedGlobalPostQueryState.get()
 
 
@@ -1061,16 +1060,7 @@ public class SearchController<Context: AccountContextProtocol>: GenericViewContr
                         
                             let adPeers: Signal<[AdPeer], NoError>
                             
-                            if query.length >= 4 {
-                                adPeers = combineLatest(context.engine.peers.searchAdPeers(query: query), searchAdState) |> map { peers, state in
-                                    let peers = peers.filter({
-                                        !state.exclude.contains($0.opaqueId) && !state.excludeAll
-                                    })
-                                    return peers
-                                }
-                            } else {
-                                adPeers = .single([])
-                            }
+                            adPeers = .single([])
                             
                             foundRemotePeers = query.hasPrefix("#") || query.hasPrefix("$") || !options.contains(.chats) || !globalTags.isEmpty || globalTags.listType == .bots ? .single(([], [], false)) : .single(([], [], true)) |> then(combineLatest(context.engine.contacts.searchRemotePeers(query: query, scope: globalTags.scope(.allChats)), adPeers)
                                 |> delay(0.2, queue: prepareQueue)

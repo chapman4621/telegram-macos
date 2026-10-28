@@ -11274,14 +11274,8 @@ open class ChatController<Context: AccountContextProtocol>: TelegramGenericViewC
         
         _ = chatInteraction.bottomInset.swap(ChatHistoryBottomRowItem.bottomInset(showsInput: ChatControllerView.showsInput(in: mode), inputOverlayHeight: 0))
                 
-        if chatLocation.peerId.namespace == Namespaces.Peer.CloudChannel || chatLocation.peerId.namespace == Namespaces.Peer.CloudUser, mode == .history {
-            self.adMessages = .init(context: context, height: sizeValue.get() |> map { $0 .height}, peerId: chatLocation.peerId)
-        } else {
-            self.adMessages = nil
-        }
+        self.adMessages = nil
         
-        
-       
         var takeTableItem:((MessageId)->ChatRowItem?)? = nil
         
         self.emojiEffects = EmojiScreenEffect(context: chatInteraction.interactionContext, takeTableItem: { msgId in

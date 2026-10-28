@@ -1003,14 +1003,6 @@ public class ChatListController<Context: AccountContextProtocol> : PeersListCont
             
             let hiddenItems: PeerListHiddenItems = state.hiddenItems
             
-            if !update.list.hasLater, case .allChats = filterData.filter {
-                let items = update.list.additionalItems.filter {
-                    !hiddenItems.promo.contains($0.item.renderedPeer.peerId)
-                }
-                for (i, current) in items.enumerated() {
-                    prepare.append((current.item, UIChatAdditionalItem(item: current, index: i + update.list.groupItems.count)))
-                }
-            }
             if !pendingRemovals.isEmpty, !state.mode.isSavedMessages {
                 prepare.removeAll(where: { item in
                     if case let .chatList(peerId) = item.0.id {
