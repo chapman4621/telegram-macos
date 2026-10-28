@@ -9,8 +9,8 @@ private let OPENSSL_INIT_NO_ATEXIT: UInt64 = 0x00080000
 
 _ = OPENSSL_init_crypto(OPENSSL_INIT_NO_ATEXIT, nil)
 
-if let groupURL = ApiEnvironment.legacyContainerURL {
-    armCrashMarker(folder: groupURL.appendingPathComponent(ApiEnvironment.prefix).path)
+if let containerURL = ApiEnvironment.containerURL {
+    armCrashMarker(folder: containerURL.path)
 }
 
 installTelegramThemeHooks()

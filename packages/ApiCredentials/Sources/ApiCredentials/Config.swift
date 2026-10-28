@@ -18,28 +18,28 @@ public final class ApiEnvironment {
     
     
     public static var containerURL: URL? {
-        let appGroupName = ApiEnvironment.group
-        let containerUrl = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupName)?.appendingPathComponent(prefix)
-        if let containerUrl = containerUrl {
-            try? FileManager.default.createDirectory(at: containerUrl, withIntermediateDirectories: true, attributes: nil)
-            return containerUrl
+        guard let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            return nil
         }
-        return nil
+        let containerUrl = applicationSupport.appendingPathComponent("TelegramMod").appendingPathComponent(prefix)
+        try? FileManager.default.createDirectory(at: containerUrl, withIntermediateDirectories: true, attributes: nil)
+        return containerUrl
     }
     
     public static func migrate() {
-        if let containerURL = containerURL, let legacy = legacyContainerURL, let sequence = FileManager.default.enumerator(atPath: legacy.path) {
-            let contents = try? FileManager.default.contentsOfDirectory(at: containerURL, includingPropertiesForKeys: nil, options: [])
-            if let contents = contents, !contents.isEmpty {
-                return
-            }
-            for value in sequence {
-                if let value = value as? String {
-                    if !prefixList.contains(value) {
-                        try? FileManager.default.moveItem(at: legacy.appendingPathComponent(value), to: containerURL.appendingPathComponent(value))
-                    }
-                }
-            }
+        guard let containerURL = containerURL else {
+            return
+        }
+        let contents = try? FileManager.default.contentsOfDirectory(at: containerURL, includingPropertiesForKeys: nil, options: [])
+        if let contents = contents, !contents.isEmpty {
+            return
+        }
+        guard let legacy = legacyContainerURL?.appendingPathComponent(prefix), FileManager.default.fileExists(atPath: legacy.path) else {
+            return
+        }
+        let legacyContents = try? FileManager.default.contentsOfDirectory(at: legacy, includingPropertiesForKeys: nil, options: [])
+        for value in legacyContents ?? [] {
+            try? FileManager.default.copyItem(at: value, to: containerURL.appendingPathComponent(value.lastPathComponent))
         }
     }
     
