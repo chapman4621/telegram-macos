@@ -278,14 +278,7 @@ public func ChatListFiltersListController(context: any AccountContextProtocol, e
     }, limitExceeded: {
         environment.showPremiumLimit(.folders)
     }, toggleTags: { value in
-        if !context.isPremium {
-            showModalText(for: context.window, text: strings().chatListFolderPremiumAlert, button: strings().alertLearnMore, callback: { _ in
-                environment.showFolderTagsPremium()
-            })
-        } else {
-            context.engine.peers.updateChatListFiltersDisplayTags(isEnabled: value)
-        }
-
+        context.engine.peers.updateChatListFiltersDisplayTags(isEnabled: value)
     })
 
 

@@ -1090,12 +1090,8 @@ public class ChatListController<Context: AccountContextProtocol> : PeersListCont
             }
                         
             if state.mode == .plain, !update.list.hasLater, state.splitState != .minimisize, state.filterData.filter == .allChats, state.forumPeer == nil {
-                if suggestions.contains(.setupBirthday), myBirthday == nil {
-                    additionItems.append(.birthdays([]))
-                } else {
-                    if !birthdays.isEmpty {
-                        additionItems.append(.birthdays(birthdays))
-                    }
+                if !birthdays.isEmpty {
+                    additionItems.append(.birthdays(birthdays))
                 }
             }
             

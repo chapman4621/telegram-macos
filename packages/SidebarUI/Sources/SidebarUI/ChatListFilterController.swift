@@ -1348,22 +1348,16 @@ public func ChatListFilterController(context: any AccountContextProtocol, enviro
 
         })
     }, toggleColor: { color in
-        if let _ = color, !context.isPremium {
-            showModalText(for: context.window, text: strings().chatListFolderPremiumAlert, button: strings().alertLearnMore, callback: { _ in
-                environment.showFolderTagsPremium()
-            })
-        } else {
-            updateState { current in
-                var current = current
-                switch current.filter {
-                case .allChats:
-                    current.filter = .allChats
-                case .filter(let id, let title, let emoticon, var data):
-                    data.color = color.flatMap { .init(rawValue: $0) }
-                    current.filter = .filter(id: id, title: title, emoticon: emoticon, data: data)
-                }
-                return current
+        updateState { current in
+            var current = current
+            switch current.filter {
+            case .allChats:
+                current.filter = .allChats
+            case .filter(let id, let title, let emoticon, var data):
+                data.color = color.flatMap { .init(rawValue: $0) }
+                current.filter = .filter(id: id, title: title, emoticon: emoticon, data: data)
             }
+            return current
         }
     }, updateState: { state in
         updateState { current in
